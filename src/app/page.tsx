@@ -1,133 +1,41 @@
 "use client";
+import { useState, useMemo } from "react";
 
 import {
   Card,
   CardContent,
   Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  TableSortLabel,
   TextField,
   Typography,
-  Button,
 } from "@mui/material";
 
-import { useState, useMemo } from "react";
-
 import { useFetch } from "../hooks/useFetch";
-import { useSort } from "../hooks/useSort";
+import { useOperatorCheck } from "../hooks/useOperatorCheck";
 
-import { readRecord, writeRecord } from "../utils/checkInStorage";
-import { formatDateTime, formatToTime } from "../utils/datetime";
+import { formatToTime } from "../utils/datetime";
 import { search } from "../utils/filters";
-import { applySort } from "../utils/sorting";
+
+import { OperatorTable } from "../components/OperatorTable";
 
 import type { Op } from "../types";
 
 export default function Home() {
-  // hooks
-  const { sortState, toggleSort, sortDirection } = useSort();
-  const { data, error, loading } = useFetch<Op[]>(
-    "https://frontend-challenge.veryableops.com/"
-  );
+  const { data, error, loading } = useFetch<Op[]>("https://frontend-challenge.veryableops.com/");
+  const {
+    codeByKey,
+    errorByKey,
+    handleCodeChange,
+    handleCheckIn,
+    handleCheckOut,
+  } = useOperatorCheck();
 
-  // states
   const [query, setQuery] = useState<string>("");
-  const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
-  const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
 
-  // derives
   const ops = data ?? [];
   const filteredOps = useMemo(
     () => search(ops, query),
     [ops, query]
   );
-
-  function handleCodeChange(opId: number, operatorId: number, value: string) {
-    const key = `${opId}:${operatorId}`;
-    setCodeByKey((prev) => ({ ...prev, [key]: value }));
-  };
-
-  function handleCheckIn(opId: number, operatorId: number, code: string) {
-    if (!code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Enter the check-in code.",
-      }));
-      return;
-    }
-
-    const op = ops.find((item) => item.opId === opId);
-    if (!op || op.checkInCode !== code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Invalid check-in code.",
-      }));
-      return;
-    }
-
-    setErrorByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
-
-    setCodeByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
-
-    writeRecord(
-      opId,
-      operatorId,
-      "checkIn",
-      {
-        code,
-        timestamp: new Date().toISOString(),
-      }
-    );
-  };
-
-  function handleCheckOut(opId: number, operatorId: number, code: string) {
-    if (!code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Enter the check-out code.",
-      }));
-      return;
-    }
-
-    const op = ops.find((item) => item.opId === opId);
-    if (!op || op.checkOutCode !== code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Invalid check-out code.",
-      }));
-      return;
-    }
-
-    setErrorByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
-
-    setCodeByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
-
-    writeRecord(
-      opId,
-      operatorId,
-      "checkOut",
-      {
-        code,
-        timestamp: new Date().toISOString(),
-      }
-    );
-  };
 
   return (
     <Stack spacing={5} sx={{ p: 4 }}>
@@ -160,182 +68,19 @@ export default function Home() {
               <Typography color="text.secondary">
                 {formatToTime(op.startTime)} – {formatToTime(op.endTime)}
               </Typography>
-              <Table size="small" sx={{ mt: 2 }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell
-                      sortDirection={
-                        sortState?.key === "firstName"
-                          ? sortState.direction
-                          : false
-                      }
-                    >
-                      <TableSortLabel
-                        active={sortState?.key === "firstName"}
-                        direction={sortDirection("firstName")}
-                        onClick={() => toggleSort("firstName")}
-                        sx={{ whiteSpace: 'nowrap' }}
-                      >
-                        First Name
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      sortDirection={
-                        sortState?.key === "lastName"
-                          ? sortState.direction
-                          : false
-                      }
-                    >
-                      <TableSortLabel
-                        active={sortState?.key === "lastName"}
-                        direction={sortDirection("lastName")}
-                        onClick={() => toggleSort("lastName")}
-                        sx={{ whiteSpace: 'nowrap' }}
-                      >
-                        Last Name
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sortDirection={
-                        sortState?.key === "opsCompleted"
-                          ? sortState.direction
-                          : false
-                      }
-                    >
-                      <TableSortLabel
-                        active={sortState?.key === "opsCompleted"}
-                        direction={sortDirection("opsCompleted")}
-                        onClick={() => toggleSort("opsCompleted")}
-                        sx={{ whiteSpace: 'nowrap' }}
-                      >
-                        Ops Completed
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      sortDirection={
-                        sortState?.key === "reliability"
-                          ? sortState.direction
-                          : false
-                      }
-                    >
-                      <TableSortLabel
-                        active={sortState?.key === "reliability"}
-                        direction={sortDirection("reliability")}
-                        onClick={() => toggleSort("reliability")}
-                      >
-                        Reliability
-                      </TableSortLabel>
-                    </TableCell>
-                    <TableCell>Endorsements</TableCell>
-                    <TableCell>Check In / Out</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {applySort(op.operators, sortState).map((operator) => {
-                    const record = readRecord(op.opId, operator.id);
-                    return (
-                      <TableRow key={operator.id}>
-                        <TableCell>
-                          {operator.firstName}
-                        </TableCell>
-                        <TableCell>{operator.lastName}</TableCell>
-                        <TableCell align="right">
-                          {operator.opsCompleted}
-                        </TableCell>
-                        <TableCell align="right">
-                          {Math.round(operator.reliability * 100)}%
-                        </TableCell>
-                        <TableCell >
-                          {operator.endorsements.join(", ")}
-                        </TableCell>
-                        <TableCell>
-                          <Stack direction="row" spacing={1} alignItems="center">
-                            <TextField
-                              size="small"
-                              label="Code"
-                              variant="outlined"
-                              value={
-                                codeByKey[`${op.opId}:${operator.id}`] ?? ""
-                              }
-                              onChange={(event) =>
-                                handleCodeChange(
-                                  op.opId,
-                                  operator.id,
-                                  event.target.value
-                                )
-                              }
-                              error={Boolean(
-                                errorByKey[`${op.opId}:${operator.id}`]
-                              )}
-                              helperText={
-                                errorByKey[`${op.opId}:${operator.id}`] ?? ""
-                              }
-                            />
-                            <Button
-                              size="small"
-                              variant="contained"
-                              onClick={() =>
-                                handleCheckIn(
-                                  op.opId,
-                                  operator.id,
-                                  codeByKey[`${op.opId}:${operator.id}`] ?? ""
-                                )
-                              }
-                              sx={{ whiteSpace: 'nowrap' }}
-                            >
-                              Check In
-                            </Button>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={() =>
-                                handleCheckOut(
-                                  op.opId,
-                                  operator.id,
-                                  codeByKey[`${op.opId}:${operator.id}`] ?? ""
-                                )
-                              }
-                              sx={{ whiteSpace: 'nowrap' }}
-                            >
-                              Check Out
-                            </Button>
-                          </Stack>
-                          {(record.checkIn || record.checkOut) && (
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              {record.checkIn && (
-                                <>
-                                  In: {formatDateTime(record.checkIn.timestamp)}
-                                </>
-                              )}
-                              {record.checkOut && (
-                                <>
-                                  {` <> `} Out: {formatDateTime(record.checkOut.timestamp)}
-                                </>
-                              )}
-                            </Typography>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                  {op.operators.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={6}>
-                        <Typography color="text.secondary">
-                          No operators to display.
-                        </Typography>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+              <OperatorTable
+                opId={op.opId}
+                operators={op.operators}
+                codeByKey={codeByKey}
+                errorByKey={errorByKey}
+                onCodeChange={handleCodeChange}
+                onCheckIn={(opId, operatorId, code) =>
+                  handleCheckIn(ops, opId, operatorId, code)
+                }
+                onCheckOut={(opId, operatorId, code) =>
+                  handleCheckOut(ops, opId, operatorId, code)
+                }
+              />
             </CardContent>
           </Card>
         ))}
