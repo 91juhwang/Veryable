@@ -28,6 +28,7 @@ export default function Home() {
   );
 
   const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
+  const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
   const ops = data ?? [];
 
   const handleCodeChange = (
@@ -45,8 +46,26 @@ export default function Home() {
     code: string
   ) => {
     if (!code) {
+      setErrorByKey((prev) => ({
+        ...prev,
+        [`${opId}:${operatorId}`]: "Enter the check-in code.",
+      }));
       return;
     }
+
+    const op = ops.find((item) => item.opId === opId);
+    if (!op || op.checkInCode !== code) {
+      setErrorByKey((prev) => ({
+        ...prev,
+        [`${opId}:${operatorId}`]: "Invalid check-in code.",
+      }));
+      return;
+    }
+
+    setErrorByKey((prev) => ({
+      ...prev,
+      [`${opId}:${operatorId}`]: "",
+    }));
 
     writeRecord(
       opId,
@@ -65,8 +84,26 @@ export default function Home() {
     code: string
   ) => {
     if (!code) {
+      setErrorByKey((prev) => ({
+        ...prev,
+        [`${opId}:${operatorId}`]: "Enter the check-out code.",
+      }));
       return;
     }
+
+    const op = ops.find((item) => item.opId === opId);
+    if (!op || op.checkOutCode !== code) {
+      setErrorByKey((prev) => ({
+        ...prev,
+        [`${opId}:${operatorId}`]: "Invalid check-out code.",
+      }));
+      return;
+    }
+
+    setErrorByKey((prev) => ({
+      ...prev,
+      [`${opId}:${operatorId}`]: "",
+    }));
 
     writeRecord(
       opId,
@@ -139,6 +176,12 @@ export default function Home() {
                                   operator.id,
                                   event.target.value
                                 )
+                              }
+                              error={Boolean(
+                                errorByKey[`${op.opId}:${operator.id}`]
+                              )}
+                              helperText={
+                                errorByKey[`${op.opId}:${operator.id}`] ?? ""
                               }
                             />
                             <Button
