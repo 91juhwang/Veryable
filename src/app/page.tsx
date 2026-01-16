@@ -9,72 +9,50 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TableSortLabel,
   TextField,
   Typography,
   Button,
 } from "@mui/material";
 
-import { useFetch, } from "../hooks/useFetch";
+import { useFetch } from "../hooks/useFetch";
 import { useState, useMemo } from "react";
 import {
   readRecord,
   writeRecord,
 } from "../utils/checkInStorage";
 import { formatDateTime, formatToTime } from "../utils/datetime";
+import { search } from "../utils/filters";
+import { sort } from "../utils/sorting";
 import type { Op } from "../types";
+import type { SortKey } from "../utils/sorting";
 
 export default function Home() {
   const { data, error, loading } = useFetch<Op[]>(
     "https://frontend-challenge.veryableops.com/"
   );
 
+  const [query, setQuery] = useState<string>("");
   const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
   const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
-  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [operatorSort, setOperatorSort] = useState<{
+    key: SortKey;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  // derived data
   const ops = data ?? [];
+  const filteredOps = useMemo(
+    () => search(ops, query),
+    [ops, query]
+  );
 
-  const normalizedQuery = searchQuery.trim().toLowerCase();
-  const filteredOps = useMemo(() => {
-    if (!normalizedQuery) return ops;
-
-    return ops.reduce<Op[]>((acc, op) => {
-      const foundOp =
-        op.opTitle.toLowerCase().includes(normalizedQuery) ||
-        op.publicId.toLowerCase().includes(normalizedQuery);
-
-      if (foundOp) {
-        acc.push(op);
-        return acc;
-      }
-
-      const foundOperators = op.operators.filter((operator) =>
-        `${operator.firstName} ${operator.lastName}`
-          .toLowerCase()
-          .includes(normalizedQuery)
-      );
-
-      if (foundOperators.length > 0) {
-        acc.push({ ...op, operators: foundOperators });
-      }
-
-      return acc;
-    }, []);
-  }, [ops, normalizedQuery]);
-
-  const handleCodeChange = (
-    opId: number,
-    operatorId: number,
-    value: string
-  ) => {
+  function handleCodeChange(opId: number, operatorId: number, value: string) {
     const key = `${opId}:${operatorId}`;
     setCodeByKey((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleCheckIn = (
-    opId: number,
-    operatorId: number,
-    code: string
-  ) => {
+  function handleCheckIn(opId: number, operatorId: number, code: string) {
     if (!code) {
       setErrorByKey((prev) => ({
         ...prev,
@@ -113,11 +91,7 @@ export default function Home() {
     );
   };
 
-  const handleCheckOut = (
-    opId: number,
-    operatorId: number,
-    code: string
-  ) => {
+  function handleCheckOut(opId: number, operatorId: number, code: string) {
     if (!code) {
       setErrorByKey((prev) => ({
         ...prev,
@@ -156,15 +130,34 @@ export default function Home() {
     );
   };
 
+  function toggleSort(key: SortKey) {
+    setOperatorSort((prev) => {
+      if (!prev || prev.key !== key) return { key, direction: "asc" }
+      if (prev.direction === "asc") return { key, direction: "desc" }
+
+      return null;
+    });
+  };
+
+  function sortDirection(key: SortKey) {
+    if (operatorSort?.key === key) return operatorSort.direction
+    return "asc";
+  };
+
+  function applySort(operators: Op["operators"]) {
+    return sort(operators, operatorSort);
+  }
+
   return (
+
     <Stack spacing={5} sx={{ p: 4 }}>
       <Typography variant="h4" component="h1">
         Ops
       </Typography>
       <TextField
         label="Search ops or operators"
-        value={searchQuery}
-        onChange={(event) => setSearchQuery(event.target.value)}
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
       />
       {loading && <Typography>Loading ops…</Typography>}
       {error && <Typography color="error">{error}</Typography>}
@@ -190,21 +183,84 @@ export default function Home() {
               <Table size="small" sx={{ mt: 2 }}>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Operator</TableCell>
-                    <TableCell align="right">Ops Completed</TableCell>
-                    <TableCell align="right">Reliability</TableCell>
+                    <TableCell
+                      sortDirection={
+                        operatorSort?.key === "firstName"
+                          ? operatorSort.direction
+                          : false
+                      }
+                    >
+                      <TableSortLabel
+                        active={operatorSort?.key === "firstName"}
+                        direction={sortDirection("firstName")}
+                        onClick={() => toggleSort("firstName")}
+                        sx={{ whiteSpace: 'nowrap' }}
+                      >
+                        First Name
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      sortDirection={
+                        operatorSort?.key === "lastName"
+                          ? operatorSort.direction
+                          : false
+                      }
+                    >
+                      <TableSortLabel
+                        active={operatorSort?.key === "lastName"}
+                        direction={sortDirection("lastName")}
+                        onClick={() => toggleSort("lastName")}
+                        sx={{ whiteSpace: 'nowrap' }}
+                      >
+                        Last Name
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sortDirection={
+                        operatorSort?.key === "opsCompleted"
+                          ? operatorSort.direction
+                          : false
+                      }
+                    >
+                      <TableSortLabel
+                        active={operatorSort?.key === "opsCompleted"}
+                        direction={sortDirection("opsCompleted")}
+                        onClick={() => toggleSort("opsCompleted")}
+                        sx={{ whiteSpace: 'nowrap' }}
+                      >
+                        Ops Completed
+                      </TableSortLabel>
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      sortDirection={
+                        operatorSort?.key === "reliability"
+                          ? operatorSort.direction
+                          : false
+                      }
+                    >
+                      <TableSortLabel
+                        active={operatorSort?.key === "reliability"}
+                        direction={sortDirection("reliability")}
+                        onClick={() => toggleSort("reliability")}
+                      >
+                        Reliability
+                      </TableSortLabel>
+                    </TableCell>
                     <TableCell>Endorsements</TableCell>
                     <TableCell>Check In / Out</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {op.operators.map((operator) => {
+                  {applySort(op.operators).map((operator) => {
                     const record = readRecord(op.opId, operator.id);
                     return (
                       <TableRow key={operator.id}>
                         <TableCell>
-                          {operator.firstName} {operator.lastName}
+                          {operator.firstName}
                         </TableCell>
+                        <TableCell>{operator.lastName}</TableCell>
                         <TableCell align="right">
                           {operator.opsCompleted}
                         </TableCell>
@@ -247,6 +303,7 @@ export default function Home() {
                                   codeByKey[`${op.opId}:${operator.id}`] ?? ""
                                 )
                               }
+                              sx={{ whiteSpace: 'nowrap' }}
                             >
                               Check In
                             </Button>
@@ -260,6 +317,7 @@ export default function Home() {
                                   codeByKey[`${op.opId}:${operator.id}`] ?? ""
                                 )
                               }
+                              sx={{ whiteSpace: 'nowrap' }}
                             >
                               Check Out
                             </Button>
