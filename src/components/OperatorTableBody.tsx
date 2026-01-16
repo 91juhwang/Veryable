@@ -12,9 +12,9 @@ type OperatorTableBodyProps = {
   sortedData: Op["operators"];
   codeByKey: Record<string, string>;
   errorByKey: Record<string, string>;
-  onCodeChange: (opId: number, operatorId: number, value: string) => void;
-  onCheckIn: (opId: number, operatorId: number, code: string) => void;
-  onCheckOut: (opId: number, operatorId: number, code: string) => void;
+  onCodeChange: (operatorId: number, value: string) => void;
+  onCheckIn: (operatorId: number, code: string) => void;
+  onCheckOut: (operatorId: number, code: string) => void;
 };
 
 export function OperatorTableBody({
@@ -59,7 +59,7 @@ export function OperatorTableBody({
                   variant="outlined"
                   value={codeByKey[key] ?? ""}
                   onChange={(event) =>
-                    onCodeChange(opId, operator.id, event.target.value)
+                    onCodeChange(operator.id, event.target.value)
                   }
                   error={Boolean(errorByKey[key])}
                   helperText={errorByKey[key] ?? ""}
@@ -67,7 +67,7 @@ export function OperatorTableBody({
                 <Button
                   size="small"
                   variant="contained"
-                  onClick={() => onCheckIn(opId, operator.id, codeByKey[key] ?? "")}
+                  onClick={() => onCheckIn(operator.id, codeByKey[key] ?? "")}
                   sx={{ whiteSpace: "nowrap" }}
                 >
                   Check In
@@ -75,7 +75,7 @@ export function OperatorTableBody({
                 <Button
                   size="small"
                   variant="outlined"
-                  onClick={() => onCheckOut(opId, operator.id, codeByKey[key] ?? "")}
+                  onClick={() => onCheckOut(operator.id, codeByKey[key] ?? "")}
                   sx={{ whiteSpace: "nowrap" }}
                 >
                   Check Out

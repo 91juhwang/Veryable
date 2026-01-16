@@ -7,27 +7,22 @@ import { OperatorTableHeader } from "./OperatorTableHeader";
 import { useSort } from "../hooks/useSort";
 import { applySort } from "../utils/sorting";
 import { OperatorTableBody } from "./OperatorTableBody";
+import { useOperatorCheck } from "../hooks/useOperatorCheck";
 
 type OperatorTableProps = {
-  opId: number;
-  operators: Op["operators"];
-  codeByKey: Record<string, string>;
-  errorByKey: Record<string, string>;
-  onCodeChange: (opId: number, operatorId: number, value: string) => void;
-  onCheckIn: (opId: number, operatorId: number, code: string) => void;
-  onCheckOut: (opId: number, operatorId: number, code: string) => void;
+  op: Op;
 };
 
-export function OperatorTable({
-  opId,
-  operators,
-  codeByKey,
-  errorByKey,
-  onCodeChange,
-  onCheckIn,
-  onCheckOut,
-}: OperatorTableProps) {
+export function OperatorTable({ op }: OperatorTableProps) {
+  const { opId, operators, checkInCode, checkOutCode } = op;
   const { sortState, toggleSort, sortDirection } = useSort();
+  const {
+    codeByKey,
+    errorByKey,
+    handleCodeChange,
+    handleCheckIn,
+    handleCheckOut,
+  } = useOperatorCheck(opId, checkInCode, checkOutCode);
   const sortedData = applySort(operators, sortState);
 
   return (
@@ -43,9 +38,9 @@ export function OperatorTable({
         sortedData={sortedData}
         codeByKey={codeByKey}
         errorByKey={errorByKey}
-        onCodeChange={onCodeChange}
-        onCheckIn={onCheckIn}
-        onCheckOut={onCheckOut}
+        onCodeChange={handleCodeChange}
+        onCheckIn={handleCheckIn}
+        onCheckOut={handleCheckOut}
       />
     </Table>
   );

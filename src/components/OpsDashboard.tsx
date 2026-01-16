@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 
 import { useFetch } from "../hooks/useFetch";
-import { useOperatorCheck } from "../hooks/useOperatorCheck";
 import { search } from "../utils/filters";
 import { SearchBar } from "./SearchBar";
 import { OpCard } from "./OpCard";
@@ -17,14 +16,6 @@ import type { Op } from "../types";
 
 export function OpsDashboard() {
   const { data, error, loading } = useFetch<Op[]>("https://frontend-challenge.veryableops.com/");
-  const {
-    codeByKey,
-    errorByKey,
-    handleCodeChange,
-    handleCheckIn,
-    handleCheckOut,
-  } = useOperatorCheck();
-
   const [query, setQuery] = useState<string>("");
 
   const ops = data ?? [];
@@ -32,9 +23,7 @@ export function OpsDashboard() {
 
   return (
     <Stack spacing={5} sx={{ p: 4 }}>
-      <Typography variant="h3" component="h1">
-        Ops
-      </Typography>
+      <Typography variant="h3" component="h1">Ops</Typography>
 
       <SearchBar value={query} onChange={setQuery} />
 
@@ -48,15 +37,7 @@ export function OpsDashboard() {
 
       <Stack spacing={2}>
         {filteredOps.map((op) => (
-          <OpCard
-            key={op.opId}
-            op={op}
-            codeByKey={codeByKey}
-            errorByKey={errorByKey}
-            onCodeChange={handleCodeChange}
-            onCheckIn={(opId, operatorId, code) => handleCheckIn(ops, opId, operatorId, code)}
-            onCheckOut={(opId, operatorId, code) => handleCheckOut(ops, opId, operatorId, code)}
-          />
+          <OpCard key={op.opId} op={op} />
         ))}
       </Stack>
     </Stack>

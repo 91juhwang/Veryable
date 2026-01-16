@@ -2,36 +2,30 @@
 
 import { useState } from "react";
 
-import type { Op } from "../types";
 import { writeRecord } from "../utils/checkInStorage";
 
 type OperatorCheckState = {
   codeByKey: Record<string, string>;
   errorByKey: Record<string, string>;
-  handleCodeChange: (opId: number, operatorId: number, value: string) => void;
-  handleCheckIn: (ops: Op[], opId: number, operatorId: number, code: string) => void;
-  handleCheckOut: (ops: Op[], opId: number, operatorId: number, code: string) => void;
+  handleCodeChange: (operatorId: number, value: string) => void;
+  handleCheckIn: (operatorId: number, code: string) => void;
+  handleCheckOut: (operatorId: number, code: string) => void;
 };
 
-export function useOperatorCheck(): OperatorCheckState {
+export function useOperatorCheck(
+  opId: number,
+  checkInCode: string,
+  checkOutCode: string
+): OperatorCheckState {
   const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
   const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
 
-  const handleCodeChange = (
-    opId: number,
-    operatorId: number,
-    value: string
-  ) => {
+  const handleCodeChange = (operatorId: number, value: string) => {
     const key = `${opId}:${operatorId}`;
     setCodeByKey((prev) => ({ ...prev, [key]: value }));
   };
 
-  const handleCheckIn = (
-    ops: Op[],
-    opId: number,
-    operatorId: number,
-    code: string
-  ) => {
+  const handleCheckIn = (operatorId: number, code: string) => {
     if (!code) {
       setErrorByKey((prev) => ({
         ...prev,
@@ -40,8 +34,7 @@ export function useOperatorCheck(): OperatorCheckState {
       return;
     }
 
-    const op = ops.find((item) => item.opId === opId);
-    if (!op || op.checkInCode !== code) {
+    if (checkInCode !== code) {
       setErrorByKey((prev) => ({
         ...prev,
         [`${opId}:${operatorId}`]: "Invalid check-in code.",
@@ -70,12 +63,7 @@ export function useOperatorCheck(): OperatorCheckState {
     );
   };
 
-  const handleCheckOut = (
-    ops: Op[],
-    opId: number,
-    operatorId: number,
-    code: string
-  ) => {
+  const handleCheckOut = (operatorId: number, code: string) => {
     if (!code) {
       setErrorByKey((prev) => ({
         ...prev,
@@ -84,8 +72,7 @@ export function useOperatorCheck(): OperatorCheckState {
       return;
     }
 
-    const op = ops.find((item) => item.opId === opId);
-    if (!op || op.checkOutCode !== code) {
+    if (checkOutCode !== code) {
       setErrorByKey((prev) => ({
         ...prev,
         [`${opId}:${operatorId}`]: "Invalid check-out code.",
