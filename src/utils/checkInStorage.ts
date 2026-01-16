@@ -1,34 +1,42 @@
-export type CheckRecord = {
+export type CheckEntry = {
   code: string;
   timestamp: string;
 };
 
-export function readRecord(
-  opId: number,
-  operatorId: number
-): CheckRecord | null {
+export type CheckRecord = {
+  checkIn?: CheckEntry;
+  checkOut?: CheckEntry;
+};
+
+export function readRecord(opId: number, operatorId: number): CheckRecord {
   if (typeof window === "undefined") {
-    return null;
+    return {};
   }
 
-  const key = `${opId}:${operatorId}`
+  const key = `${opId}:${operatorId}`;
   const raw = window.localStorage.getItem(key);
 
-  if (!raw) return null;
-  return JSON.parse(raw);
+  if (!raw) return {};
+
+  try {
+    return JSON.parse(raw) as CheckRecord;
+  } catch {
+    return {};
+  }
 }
 
 export function writeRecord(
   opId: number,
   operatorId: number,
-  record: CheckRecord
+  kind: "checkIn" | "checkOut",
+  entry: CheckEntry
 ): void {
   if (typeof window === "undefined") {
     return;
   }
 
-  window.localStorage.setItem(
-    `${opId}:${operatorId}`,
-    JSON.stringify(record)
-  );
+  const key = `${opId}:${operatorId}`;
+  const current = readRecord(opId, operatorId);
+  const next: CheckRecord = { ...current, [kind]: entry };
+  window.localStorage.setItem(key, JSON.stringify(next));
 }
