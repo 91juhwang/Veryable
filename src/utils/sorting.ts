@@ -3,10 +3,7 @@ import type { Op } from "../types";
 export type SortKey = "firstName" | "lastName" | "opsCompleted" | "reliability";
 type Sort = { key: SortKey; direction: "asc" | "desc" } | null;
 
-export function sort(
-  operators: Op["operators"],
-  sort: Sort
-): Op["operators"] {
+export function sort(operators: Op["operators"], sort: Sort): Op["operators"] {
   if (!sort) return operators;
 
   const sorted = [...operators].sort((a, b) => {
@@ -28,9 +25,6 @@ export function sort(
   return sort.direction === "asc" ? sorted : sorted.reverse();
 }
 
-export function applySort(
-  operators: Op["operators"],
-  sortState: Sort
-): Op["operators"] {
+export function applySort(operators: Op["operators"], sortState: Sort): Op["operators"] {
   return sort(operators, sortState);
 }

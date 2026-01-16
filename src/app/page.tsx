@@ -15,32 +15,31 @@ import {
   Button,
 } from "@mui/material";
 
-import { useFetch } from "../hooks/useFetch";
 import { useState, useMemo } from "react";
-import {
-  readRecord,
-  writeRecord,
-} from "../utils/checkInStorage";
+
+import { useFetch } from "../hooks/useFetch";
+import { useSort } from "../hooks/useSort";
+
+import { readRecord, writeRecord } from "../utils/checkInStorage";
 import { formatDateTime, formatToTime } from "../utils/datetime";
 import { search } from "../utils/filters";
 import { applySort } from "../utils/sorting";
+
 import type { Op } from "../types";
-import type { SortKey } from "../utils/sorting";
 
 export default function Home() {
+  // hooks
+  const { sortState, toggleSort, sortDirection } = useSort();
   const { data, error, loading } = useFetch<Op[]>(
     "https://frontend-challenge.veryableops.com/"
   );
 
+  // states
   const [query, setQuery] = useState<string>("");
   const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
   const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
-  const [operatorSort, setOperatorSort] = useState<{
-    key: SortKey;
-    direction: "asc" | "desc";
-  } | null>(null);
 
-  // derived data
+  // derives
   const ops = data ?? [];
   const filteredOps = useMemo(
     () => search(ops, query),
@@ -130,22 +129,7 @@ export default function Home() {
     );
   };
 
-  function toggleSort(key: SortKey) {
-    setOperatorSort((prev) => {
-      if (!prev || prev.key !== key) return { key, direction: "asc" }
-      if (prev.direction === "asc") return { key, direction: "desc" }
-
-      return null;
-    });
-  };
-
-  function sortDirection(key: SortKey) {
-    if (operatorSort?.key === key) return operatorSort.direction
-    return "asc";
-  };
-
   return (
-
     <Stack spacing={5} sx={{ p: 4 }}>
       <Typography variant="h4" component="h1">
         Ops
@@ -181,13 +165,13 @@ export default function Home() {
                   <TableRow>
                     <TableCell
                       sortDirection={
-                        operatorSort?.key === "firstName"
-                          ? operatorSort.direction
+                        sortState?.key === "firstName"
+                          ? sortState.direction
                           : false
                       }
                     >
                       <TableSortLabel
-                        active={operatorSort?.key === "firstName"}
+                        active={sortState?.key === "firstName"}
                         direction={sortDirection("firstName")}
                         onClick={() => toggleSort("firstName")}
                         sx={{ whiteSpace: 'nowrap' }}
@@ -197,13 +181,13 @@ export default function Home() {
                     </TableCell>
                     <TableCell
                       sortDirection={
-                        operatorSort?.key === "lastName"
-                          ? operatorSort.direction
+                        sortState?.key === "lastName"
+                          ? sortState.direction
                           : false
                       }
                     >
                       <TableSortLabel
-                        active={operatorSort?.key === "lastName"}
+                        active={sortState?.key === "lastName"}
                         direction={sortDirection("lastName")}
                         onClick={() => toggleSort("lastName")}
                         sx={{ whiteSpace: 'nowrap' }}
@@ -214,13 +198,13 @@ export default function Home() {
                     <TableCell
                       align="right"
                       sortDirection={
-                        operatorSort?.key === "opsCompleted"
-                          ? operatorSort.direction
+                        sortState?.key === "opsCompleted"
+                          ? sortState.direction
                           : false
                       }
                     >
                       <TableSortLabel
-                        active={operatorSort?.key === "opsCompleted"}
+                        active={sortState?.key === "opsCompleted"}
                         direction={sortDirection("opsCompleted")}
                         onClick={() => toggleSort("opsCompleted")}
                         sx={{ whiteSpace: 'nowrap' }}
@@ -231,13 +215,13 @@ export default function Home() {
                     <TableCell
                       align="right"
                       sortDirection={
-                        operatorSort?.key === "reliability"
-                          ? operatorSort.direction
+                        sortState?.key === "reliability"
+                          ? sortState.direction
                           : false
                       }
                     >
                       <TableSortLabel
-                        active={operatorSort?.key === "reliability"}
+                        active={sortState?.key === "reliability"}
                         direction={sortDirection("reliability")}
                         onClick={() => toggleSort("reliability")}
                       >
@@ -249,7 +233,7 @@ export default function Home() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {applySort(op.operators, operatorSort).map((operator) => {
+                  {applySort(op.operators, sortState).map((operator) => {
                     const record = readRecord(op.opId, operator.id);
                     return (
                       <TableRow key={operator.id}>
