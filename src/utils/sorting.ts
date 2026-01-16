@@ -27,3 +27,10 @@ export function sort(
 
   return sort.direction === "asc" ? sorted : sorted.reverse();
 }
+
+export function applySort(
+  operators: Op["operators"],
+  sortState: Sort
+): Op["operators"] {
+  return sort(operators, sortState);
+}

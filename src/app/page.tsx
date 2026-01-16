@@ -23,7 +23,7 @@ import {
 } from "../utils/checkInStorage";
 import { formatDateTime, formatToTime } from "../utils/datetime";
 import { search } from "../utils/filters";
-import { sort } from "../utils/sorting";
+import { applySort } from "../utils/sorting";
 import type { Op } from "../types";
 import type { SortKey } from "../utils/sorting";
 
@@ -144,10 +144,6 @@ export default function Home() {
     return "asc";
   };
 
-  function applySort(operators: Op["operators"]) {
-    return sort(operators, operatorSort);
-  }
-
   return (
 
     <Stack spacing={5} sx={{ p: 4 }}>
@@ -253,7 +249,7 @@ export default function Home() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {applySort(op.operators).map((operator) => {
+                  {applySort(op.operators, operatorSort).map((operator) => {
                     const record = readRecord(op.opId, operator.id);
                     return (
                       <TableRow key={operator.id}>
