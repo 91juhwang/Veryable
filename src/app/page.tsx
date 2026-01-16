@@ -1,16 +1,39 @@
-import { Stack, Typography } from "@mui/material";
+"use client";
+
+import { Card, CardContent, Stack, Typography } from "@mui/material";
+
+import { useFetch } from "../hooks/useFetch";
+import type { Op } from "../types";
 
 export default function Home() {
+  const { data, error, loading } = useFetch<Op[]>(
+    "https://frontend-challenge.veryableops.com/"
+  );
+
+  const ops = data ?? [];
+
   return (
-    <Stack
-      sx={{
-        width: "100%",
-        height: "100vh",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Typography variant="h1">Hello World</Typography>
+    <Stack spacing={3} sx={{ p: 3 }}>
+      <Typography variant="h4" component="h1">
+        Ops
+      </Typography>
+      {loading && <Typography>Loading ops…</Typography>}
+      {error && <Typography color="error">{error}</Typography>}
+      <Stack spacing={2}>
+        {ops.map((op) => (
+          <Card key={op.opId} variant="outlined">
+            <CardContent>
+              <Typography variant="h6">{op.opTitle}</Typography>
+              <Typography color="text.secondary">
+                ID: {op.publicId}
+              </Typography>
+              <Typography color="text.secondary">
+                {op.operatorsNeeded} operators needed
+              </Typography>
+            </CardContent>
+          </Card>
+        ))}
+      </Stack>
     </Stack>
   );
 }
