@@ -68,6 +68,11 @@ export default function Home() {
       [`${opId}:${operatorId}`]: "",
     }));
 
+    setCodeByKey((prev) => ({
+      ...prev,
+      [`${opId}:${operatorId}`]: "",
+    }));
+
     writeRecord(
       opId,
       operatorId,
@@ -102,6 +107,11 @@ export default function Home() {
     }
 
     setErrorByKey((prev) => ({
+      ...prev,
+      [`${opId}:${operatorId}`]: "",
+    }));
+
+    setCodeByKey((prev) => ({
       ...prev,
       [`${opId}:${operatorId}`]: "",
     }));
