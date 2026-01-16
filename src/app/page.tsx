@@ -168,6 +168,11 @@ export default function Home() {
       />
       {loading && <Typography>Loading ops…</Typography>}
       {error && <Typography color="error">{error}</Typography>}
+      {!loading && !error && filteredOps.length === 0 && (
+        <Typography color="text.secondary">
+          No ops or operators match your search.
+        </Typography>
+      )}
       <Stack spacing={2}>
         {filteredOps.map((op) => (
           <Card key={op.opId} variant="outlined">
