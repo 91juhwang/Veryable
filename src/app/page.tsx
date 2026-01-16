@@ -20,6 +20,7 @@ import {
   readRecord,
   writeRecord,
 } from "../utils/checkInStorage";
+import { formatDateTime, formatToTime } from "../utils/datetime";
 import type { Op } from "../types";
 
 export default function Home() {
@@ -134,6 +135,9 @@ export default function Home() {
               <Typography color="text.secondary">
                 {op.operatorsNeeded} operators needed
               </Typography>
+              <Typography color="text.secondary">
+                {formatToTime(op.startTime)} – {formatToTime(op.endTime)}
+              </Typography>
               <Table size="small" sx={{ mt: 2 }}>
                 <TableHead>
                   <TableRow>
@@ -220,16 +224,12 @@ export default function Home() {
                             >
                               {record.checkIn && (
                                 <>
-                                  In: {new Date(
-                                    record.checkIn.timestamp
-                                  ).toLocaleString()}
+                                  In: {formatDateTime(record.checkIn.timestamp)}
                                 </>
                               )}
                               {record.checkOut && (
                                 <>
-                                  {` <> `} Out: {new Date(
-                                    record.checkOut.timestamp
-                                  ).toLocaleString()}
+                                  {` <> `} Out: {formatDateTime(record.checkOut.timestamp)}
                                 </>
                               )}
                             </Typography>
