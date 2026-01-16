@@ -14,8 +14,8 @@ import {
   Button,
 } from "@mui/material";
 
-import { useFetch } from "../hooks/useFetch";
-import { useState } from "react";
+import { useFetch, } from "../hooks/useFetch";
+import { useState, useMemo } from "react";
 import {
   readRecord,
   writeRecord,
@@ -30,7 +30,36 @@ export default function Home() {
 
   const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
   const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const ops = data ?? [];
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredOps = useMemo(() => {
+    if (!normalizedQuery) return ops;
+
+    return ops.reduce<Op[]>((acc, op) => {
+      const foundOp =
+        op.opTitle.toLowerCase().includes(normalizedQuery) ||
+        op.publicId.toLowerCase().includes(normalizedQuery);
+
+      if (foundOp) {
+        acc.push(op);
+        return acc;
+      }
+
+      const foundOperators = op.operators.filter((operator) =>
+        `${operator.firstName} ${operator.lastName}`
+          .toLowerCase()
+          .includes(normalizedQuery)
+      );
+
+      if (foundOperators.length > 0) {
+        acc.push({ ...op, operators: foundOperators });
+      }
+
+      return acc;
+    }, []);
+  }, [ops, normalizedQuery]);
 
   const handleCodeChange = (
     opId: number,
@@ -132,10 +161,15 @@ export default function Home() {
       <Typography variant="h4" component="h1">
         Ops
       </Typography>
+      <TextField
+        label="Search ops or operators"
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
+      />
       {loading && <Typography>Loading ops…</Typography>}
       {error && <Typography color="error">{error}</Typography>}
       <Stack spacing={2}>
-        {ops.map((op) => (
+        {filteredOps.map((op) => (
           <Card key={op.opId} variant="outlined">
             <CardContent>
               <Typography variant="h6">{op.opTitle}</Typography>
