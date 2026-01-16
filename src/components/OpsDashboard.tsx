@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 
@@ -15,6 +14,7 @@ import { useOperatorCheck } from "../hooks/useOperatorCheck";
 import { formatToTime } from "../utils/datetime";
 import { search } from "../utils/filters";
 import { OperatorTable } from "./OperatorTable";
+import { SearchBar } from "./SearchBar";
 
 import type { Op } from "../types";
 
@@ -37,14 +37,12 @@ export function OpsDashboard() {
 
   return (
     <Stack spacing={5} sx={{ p: 4 }}>
-      <Typography variant="h4" component="h1">
+      <Typography variant="h3" component="h1">
         Ops
       </Typography>
-      <TextField
-        label="Search ops or operators"
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+
+      <SearchBar value={query} onChange={setQuery} />
+
       {loading && <Typography>Loading ops…</Typography>}
       {error && <Typography color="error">{error}</Typography>}
       {!loading && !error && filteredOps.length === 0 && (
@@ -52,6 +50,7 @@ export function OpsDashboard() {
           No ops or operators match your search.
         </Typography>
       )}
+
       <Stack spacing={2}>
         {filteredOps.map((op) => (
           <Card key={op.opId} variant="outlined">
