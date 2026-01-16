@@ -345,6 +345,15 @@ export default function Home() {
                       </TableRow>
                     );
                   })}
+                  {op.operators.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <Typography color="text.secondary">
+                          No operators to display.
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
