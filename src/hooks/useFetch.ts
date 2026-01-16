@@ -7,7 +7,7 @@ type FetchState<T> = {
 };
 
 export function useFetch<T>(url: string | null): FetchState<T> {
-  const abortRef = useRef<AbortController | null>(null); // always good to have when scaling - filters, race conditions, etc.
+  const abortRef = useRef<AbortController | null>(null); // For scaling - filters, race conditions, etc.
   const [state, setState] = useState<FetchState<T>>({
     data: null,
     error: null,

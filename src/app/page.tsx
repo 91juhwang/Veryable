@@ -1,6 +1,16 @@
 "use client";
 
-import { Card, CardContent, Stack, Typography } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+} from "@mui/material";
 
 import { useFetch } from "../hooks/useFetch";
 import type { Op } from "../types";
@@ -30,6 +40,32 @@ export default function Home() {
               <Typography color="text.secondary">
                 {op.operatorsNeeded} operators needed
               </Typography>
+              <Table size="small" sx={{ mt: 2 }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Operator</TableCell>
+                    <TableCell align="right">Ops Completed</TableCell>
+                    <TableCell align="right">Reliability</TableCell>
+                    <TableCell>Endorsements</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {op.operators.map((operator) => (
+                    <TableRow key={operator.id}>
+                      <TableCell>
+                        {operator.firstName} {operator.lastName}
+                      </TableCell>
+                      <TableCell align="right">
+                        {operator.opsCompleted}
+                      </TableCell>
+                      <TableCell align="right">
+                        {Math.round(operator.reliability * 100)}%
+                      </TableCell>
+                      <TableCell>{operator.endorsements.join(", ")}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         ))}
