@@ -177,17 +177,14 @@ export default function Home() {
                             >
                               {record.checkIn && (
                                 <>
-                                  In: {record.checkIn.code} •{" "}
-                                  {new Date(
+                                  In: {new Date(
                                     record.checkIn.timestamp
                                   ).toLocaleString()}
                                 </>
                               )}
-                              {record.checkIn && record.checkOut && " • "}
                               {record.checkOut && (
                                 <>
-                                  Out: {record.checkOut.code} •{" "}
-                                  {new Date(
+                                  {` <> `} Out: {new Date(
                                     record.checkOut.timestamp
                                   ).toLocaleString()}
                                 </>
