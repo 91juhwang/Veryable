@@ -9,10 +9,14 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TextField,
   Typography,
+  Button,
 } from "@mui/material";
 
 import { useFetch } from "../hooks/useFetch";
+import { useState } from "react";
+import { writeRecord } from "../utils/checkInStorage";
 import type { Op } from "../types";
 
 export default function Home() {
@@ -20,10 +24,35 @@ export default function Home() {
     "https://frontend-challenge.veryableops.com/"
   );
 
+  const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
   const ops = data ?? [];
 
+  const handleCodeChange = (
+    opId: number,
+    operatorId: number,
+    value: string
+  ) => {
+    const key = `${opId}:${operatorId}`;
+    setCodeByKey((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleCheck = (
+    opId: number,
+    operatorId: number,
+    code: string
+  ) => {
+    if (!code) {
+      return;
+    }
+
+    writeRecord(opId, operatorId, {
+      code,
+      timestamp: new Date().toISOString(),
+    });
+  };
+
   return (
-    <Stack spacing={3} sx={{ p: 3 }}>
+    <Stack spacing={5} sx={{ p: 4 }}>
       <Typography variant="h4" component="h1">
         Ops
       </Typography>
@@ -47,6 +76,7 @@ export default function Home() {
                     <TableCell align="right">Ops Completed</TableCell>
                     <TableCell align="right">Reliability</TableCell>
                     <TableCell>Endorsements</TableCell>
+                    <TableCell>Check In / Out</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -61,7 +91,54 @@ export default function Home() {
                       <TableCell align="right">
                         {Math.round(operator.reliability * 100)}%
                       </TableCell>
-                      <TableCell>{operator.endorsements.join(", ")}</TableCell>
+                      <TableCell >
+                        {operator.endorsements.join(", ")}
+                      </TableCell>
+                      <TableCell>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <TextField
+                            size="small"
+                            label="Code"
+                            variant="outlined"
+                            value={
+                              codeByKey[`${op.opId}:${operator.id}`] ?? ""
+                            }
+                            onChange={(event) =>
+                              handleCodeChange(
+                                op.opId,
+                                operator.id,
+                                event.target.value
+                              )
+                            }
+                          />
+                          <Button
+                            size="small"
+                            variant="contained"
+                            onClick={() =>
+                              handleCheck(
+                                op.opId,
+                                operator.id,
+                                codeByKey[`${op.opId}:${operator.id}`] ?? ""
+                              )
+                            }
+                          >
+                            Check In
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() =>
+                              handleCheck(
+                                op.opId,
+                                operator.id,
+                                codeByKey[`${op.opId}:${operator.id}`] ?? ""
+                              )
+                            }
+                          >
+                            Check Out
+                          </Button>
+                        </Stack>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
