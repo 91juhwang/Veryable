@@ -2,9 +2,10 @@
 
 import { Button, Stack, TableBody, TableCell, TableRow, TextField, Typography } from "@mui/material";
 
-import type { Op } from "../types";
 import { readRecord } from "../utils/checkInStorage";
 import { formatDateTime } from "../utils/datetime";
+
+import type { Op } from "../types";
 
 type OperatorTableBodyProps = {
   opId: number;

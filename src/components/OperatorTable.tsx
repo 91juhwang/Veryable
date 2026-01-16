@@ -2,12 +2,15 @@
 
 import { Table } from "@mui/material";
 
-import type { Op } from "../types";
-import { OperatorTableHeader } from "./OperatorTableHeader";
-import { useSort } from "../hooks/useSort";
-import { applySort } from "../utils/sorting";
-import { OperatorTableBody } from "./OperatorTableBody";
 import { useOperatorCheck } from "../hooks/useOperatorCheck";
+import { useSort } from "../hooks/useSort";
+
+import { OperatorTableHeader } from "./OperatorTableHeader";
+import { OperatorTableBody } from "./OperatorTableBody";
+
+import { applySort } from "../utils/sorting";
+
+import type { Op } from "../types";
 
 type OperatorTableProps = {
   op: Op;

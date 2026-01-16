@@ -1,14 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
 import {
   Stack,
   Typography,
 } from "@mui/material";
 
 import { useFetch } from "../hooks/useFetch";
-import { search } from "../utils/filters";
+import { useSearch } from "../hooks/useSearch";
+
 import { SearchBar } from "./SearchBar";
 import { OpCard } from "./OpCard";
 
@@ -16,10 +15,9 @@ import type { Op } from "../types";
 
 export function OpsDashboard() {
   const { data, error, loading } = useFetch<Op[]>("https://frontend-challenge.veryableops.com/");
-  const [query, setQuery] = useState<string>("");
 
   const ops = data ?? [];
-  const filteredOps = useMemo(() => search(ops, query), [ops, query]);
+  const { query, setQuery, filteredOps } = useSearch(ops);
 
   return (
     <Stack spacing={5} sx={{ p: 4 }}>

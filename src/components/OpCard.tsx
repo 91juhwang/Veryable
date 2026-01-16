@@ -2,9 +2,11 @@
 
 import { Card, CardContent, Typography } from "@mui/material";
 
-import type { Op } from "../types";
-import { formatToTime } from "../utils/datetime";
 import { OperatorTable } from "./OperatorTable";
+
+import { formatToTime } from "../utils/datetime";
+
+import type { Op } from "../types";
 
 type OpCardProps = {
   op: Op;
