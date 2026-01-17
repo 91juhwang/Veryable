@@ -25,6 +25,8 @@ npm run dev # or pnpm :)
 
 ## Decisions & Trade-offs
 
+- **SSR** 
+  - Since this is NextJS, I opted in for SSR. Avoids fetching after hydration (client side fetching with hooks)
 - **Purposely kept dependencies small (intentional)**.
   - Given the small datasets, sorting/searching can be handled with a few small helpers without pulling in large table/data libraries.
   - Benefits:
