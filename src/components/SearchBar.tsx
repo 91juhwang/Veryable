@@ -3,10 +3,21 @@
 import { TextField, InputAdornment } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
+import type { TextFieldProps } from "@mui/material";
 
 type SearchBarProps = {
   value: string;
   onChange: (value: string) => void;
+};
+
+const searchInputSlotProps: TextFieldProps["slotProps"] = {
+  input: {
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon />
+      </InputAdornment>
+    ),
+  },
 };
 
 export function SearchBar({ value, onChange }: SearchBarProps) {
@@ -37,15 +48,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           color: alpha(theme.palette.primary.main, 0.8),
         },
       })}
-      slotProps={{
-        input: {
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        },
-      }}
+      slotProps={searchInputSlotProps}
     />
   );
 }
