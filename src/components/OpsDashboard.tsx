@@ -12,7 +12,6 @@ import { SearchBar } from "./SearchBar";
 import { OpCard } from "./OpCard";
 
 import type { Op } from "../types";
-import { CenterFocusStrong } from "@mui/icons-material";
 
 export function OpsDashboard() {
   const { data, error, loading } = useFetch<Op[]>("https://frontend-challenge.veryableops.com/");
