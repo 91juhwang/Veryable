@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Stack, TableBody, TableCell, TableRow, TextField, Typography } from "@mui/material";
+import { Button, Chip, Stack, TableBody, TableCell, TableRow, TextField, Typography } from "@mui/material";
 // import { useEffect, useState } from "react";
 
 import { readRecord } from "../utils/checkInStorage";
@@ -53,7 +53,18 @@ export function OperatorTableBody({
             <TableCell align="right">
               {Math.round(operator.reliability * 100)}%
             </TableCell>
-            <TableCell>{operator.endorsements.join(", ")}</TableCell>
+            <TableCell>
+              <Stack direction="row" spacing={0.5} sx={{ flexWrap: "nowrap" }}>
+                {operator.endorsements.map((endorsement) => (
+                  <Chip
+                    key={`${operator.id}-${endorsement}`}
+                    label={endorsement}
+                    size="small"
+                    variant="outlined"
+                  />
+                ))}
+              </Stack>
+            </TableCell>
             <TableCell>
               <Stack direction="row" spacing={1} alignItems="center">
                 <TextField
