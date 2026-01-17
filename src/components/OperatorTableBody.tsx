@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, Stack, TableBody, TableCell, TableRow, TextField, Typography } from "@mui/material";
+// import { useEffect, useState } from "react";
 
 import { readRecord } from "../utils/checkInStorage";
 import { formatDateTime } from "../utils/datetime";
@@ -28,6 +29,7 @@ export function OperatorTableBody({
   onCheckIn,
   onCheckOut,
 }: OperatorTableBodyProps) {
+
   return (
     <TableBody>
       {operators.length === 0 && (
@@ -40,13 +42,13 @@ export function OperatorTableBody({
         </TableRow>
       )}
       {sortedData.map((operator) => {
-        const record = readRecord(opId, operator.id);
+        const record = readRecord(opId, operator.id) ?? null;
         const key = `${opId}:${operator.id}`;
 
         return (
           <TableRow key={operator.id}>
             <TableCell>{operator.firstName}</TableCell>
-            <TableCell>{operator.lastName}</TableCell>
+            <TableCell sx={{ whitespace: 'nowrap' }}>{operator.lastName}</TableCell>
             <TableCell align="right">{operator.opsCompleted}</TableCell>
             <TableCell align="right">
               {Math.round(operator.reliability * 100)}%
@@ -82,15 +84,15 @@ export function OperatorTableBody({
                   Check Out
                 </Button>
               </Stack>
-              {(record.checkIn || record.checkOut) && (
+              {(record?.checkIn || record?.checkOut) && (
                 <Typography
                   variant="caption"
                   color="text.secondary"
                   display="block"
                   sx={{ mt: 0.5 }}
                 >
-                  {record.checkIn && <>In: {formatDateTime(record.checkIn.timestamp)}</>}
-                  {record.checkOut && (
+                  {record?.checkIn && <>In: {formatDateTime(record.checkIn.timestamp)}</>}
+                  {record?.checkOut && (
                     <>
                       {" <> "} Out: {formatDateTime(record.checkOut.timestamp)}
                     </>

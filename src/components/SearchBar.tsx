@@ -11,6 +11,7 @@ type SearchBarProps = {
 export function SearchBar({ value, onChange }: SearchBarProps) {
   return (
     <TextField
+      id="ops-search"
       label="Search ops or operators"
       value={value}
       onChange={(event) => onChange(event.target.value)}
