@@ -1,6 +1,6 @@
 "use client";
 
-import { Table } from "@mui/material";
+import { Table, TableContainer } from "@mui/material";
 
 import { useOperatorCheck } from "../hooks/useOperatorCheck";
 import { useSort } from "../hooks/useSort";
@@ -29,22 +29,24 @@ export function OperatorTable({ op }: OperatorTableProps) {
   const sortedData = applySort(operators, sortState);
 
   return (
-    <Table size="small" sx={{ mt: 2 }}>
-      <OperatorTableHeader
-        sortState={sortState}
-        onToggleSort={toggleSort}
-        sortDirection={sortDirection}
-      />
-      <OperatorTableBody
-        opId={opId}
-        operators={operators}
-        sortedData={sortedData}
-        codeByKey={codeByKey}
-        errorByKey={errorByKey}
-        onCodeChange={handleCodeChange}
-        onCheckIn={handleCheckIn}
-        onCheckOut={handleCheckOut}
-      />
-    </Table>
+    <TableContainer sx={{ mt: 2, overflowX: "auto" }}>
+      <Table size="small" sx={{ minWidth: 760 }}>
+        <OperatorTableHeader
+          sortState={sortState}
+          onToggleSort={toggleSort}
+          sortDirection={sortDirection}
+        />
+        <OperatorTableBody
+          opId={opId}
+          operators={operators}
+          sortedData={sortedData}
+          codeByKey={codeByKey}
+          errorByKey={errorByKey}
+          onCodeChange={handleCodeChange}
+          onCheckIn={handleCheckIn}
+          onCheckOut={handleCheckOut}
+        />
+      </Table>
+    </TableContainer>
   );
 }

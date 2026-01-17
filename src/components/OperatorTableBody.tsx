@@ -32,7 +32,16 @@ export function OperatorTableBody({
 }: OperatorTableBodyProps) {
 
   return (
-    <TableBody>
+    <TableBody
+      sx={{
+        "& .MuiTableRow-root:last-of-type > td": {
+          borderBottom: 0,
+        },
+        "& .MuiTableRow-root:last-of-type > th": {
+          borderBottom: 0,
+        },
+      }}
+    >
       {operators.length === 0 && (
         <TableRow>
           <TableCell colSpan={6}>
@@ -120,9 +129,6 @@ export function OperatorTableBody({
             </TableCell>
             <TableCell sx={{ whiteSpace: "nowrap" }}>
               <Stack spacing={0.25}>
-                <Typography variant="caption" color="text.secondary">
-                  Status
-                </Typography>
                 {record?.checkIn ? (
                   <Typography variant="body2">
                     Checked in - {formatToTime(record.checkIn.timestamp)}

@@ -21,7 +21,24 @@ export function OperatorTableHeader({
   }
 
   return (
-    <TableHead>
+    <TableHead
+      sx={(theme) => ({
+        "& .MuiTableCell-root": {
+          color: theme.palette.text.secondary,
+          fontWeight: 400,
+        },
+        "& .MuiTableSortLabel-root": {
+          color: theme.palette.text.secondary,
+          fontWeight: 400,
+        },
+        "& .MuiTableSortLabel-root.Mui-active": {
+          color: theme.palette.text.secondary,
+        },
+        "& .MuiTableSortLabel-icon": {
+          color: theme.palette.text.secondary,
+        },
+      })}
+    >
       <TableRow>
         <TableCell
           sortDirection={cellDirection("name")}

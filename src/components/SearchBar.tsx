@@ -1,6 +1,7 @@
 "use client";
 
 import { TextField, InputAdornment } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import SearchIcon from "@mui/icons-material/Search";
 
 type SearchBarProps = {
@@ -16,6 +17,26 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       value={value}
       onChange={(event) => onChange(event.target.value)}
       variant="outlined"
+      sx={(theme) => ({
+        "& .MuiOutlinedInput-root fieldset": {
+          borderColor: alpha(theme.palette.primary.main, 0.35),
+        },
+        "& .MuiOutlinedInput-root:hover fieldset": {
+          borderColor: alpha(theme.palette.primary.main, 0.55),
+        },
+        "& .MuiOutlinedInput-root.Mui-focused fieldset": {
+          borderColor: theme.palette.primary.main,
+        },
+        "& .MuiInputLabel-root": {
+          color: alpha(theme.palette.primary.main, 0.8),
+        },
+        "& .MuiInputLabel-root.Mui-focused": {
+          color: theme.palette.primary.main,
+        },
+        "& .MuiInputAdornment-root": {
+          color: alpha(theme.palette.primary.main, 0.8),
+        },
+      })}
       slotProps={{
         input: {
           startAdornment: (
