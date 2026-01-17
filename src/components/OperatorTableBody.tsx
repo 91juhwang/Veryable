@@ -2,7 +2,6 @@
 
 import { Button, Chip, Stack, TableBody, TableCell, TableRow, TextField, Typography } from "@mui/material";
 import { alpha } from "@mui/material/styles";
-// import { useEffect, useState } from "react";
 
 import { readRecord } from "../utils/checkInStorage";
 import { formatToTime } from "../utils/datetime";
