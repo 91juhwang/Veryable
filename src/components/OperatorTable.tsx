@@ -9,7 +9,7 @@ import { useSort } from "../hooks/useSort";
 import { OperatorTableHeader } from "./OperatorTableHeader";
 import { OperatorTableBody } from "./OperatorTableBody";
 
-import { applySort } from "../utils/sorting";
+import { sort } from "../utils/sorting";
 
 import type { Op } from "../types";
 
@@ -20,7 +20,7 @@ type OperatorTableProps = {
 export function OperatorTable({ op }: OperatorTableProps) {
   const { opId, operators, checkInCode, checkOutCode } = op;
   const { sortState, toggleSort, sortDirection } = useSort();
-  const sortedData = useMemo(() => applySort(operators, sortState), [operators, sortState]);
+  const sortedData = useMemo(() => sort(operators, sortState), [operators, sortState]);
   const {
     codeByKey,
     errorByKey,
