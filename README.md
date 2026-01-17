@@ -20,7 +20,8 @@ npm run dev # or pnpm :)
 - `src/components` - UI components (dashboard, cards, table, searchBar)
 - `src/hooks` - custom hooks to isolate/separate UI state + side effects  (`useFetch`, `useSearch`, `useSort`, `useOperatorCheck`)
 - `src/utils` - reusable/specific business logic helpers (`filters`, `sorting`, `datetime`, `checkInStorage`)
-- `tests` - Jest tests for hooks and components
+- `tests` - Jest tests for hooks and components: `pnpm run test`
+
 
 ## Decisions & Trade-offs
 
