@@ -5,7 +5,6 @@ import {
   Typography,
 } from "@mui/material";
 
-import { useFetch } from "../hooks/useFetch";
 import { useSearch } from "../hooks/useSearch";
 
 import { SearchBar } from "./SearchBar";
@@ -13,10 +12,12 @@ import { OpCard } from "./OpCard";
 
 import type { Op } from "../types";
 
-export function OpsDashboard() {
-  const { data, error, loading } = useFetch<Op[]>("https://frontend-challenge.veryableops.com/");
+type OpsDashboardProps = {
+  ops?: Op[];
+  error?: string | null;
+};
 
-  const ops = data ?? [];
+export function OpsDashboard({ ops = [], error = null }: OpsDashboardProps) {
   const { query, setQuery, filteredOps } = useSearch(ops);
 
   return (
@@ -25,9 +26,8 @@ export function OpsDashboard() {
 
       <SearchBar value={query} onChange={setQuery} />
 
-      {loading && <Typography>Loading ops…</Typography>}
       {error && <Typography color="error">{error}</Typography>}
-      {!loading && !error && filteredOps.length === 0 && (
+      {!error && filteredOps.length === 0 && (
         <Typography color="text.secondary">
           No ops or operators match your search.
         </Typography>
