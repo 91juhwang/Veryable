@@ -18,7 +18,6 @@ describe("OperatorTableBody", () => {
       <table>
         <OperatorTableBody
           opId={1}
-          operators={[]}
           sortedData={[]}
           codeByKey={{}}
           errorByKey={{}}
@@ -37,7 +36,6 @@ describe("OperatorTableBody", () => {
       <table>
         <OperatorTableBody
           opId={1}
-          operators={[operator]}
           sortedData={[operator]}
           codeByKey={{}}
           errorByKey={{}}

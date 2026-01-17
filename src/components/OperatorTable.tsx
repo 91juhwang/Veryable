@@ -39,7 +39,6 @@ export function OperatorTable({ op }: OperatorTableProps) {
         />
         <OperatorTableBody
           opId={opId}
-          operators={operators}
           sortedData={sortedData}
           codeByKey={codeByKey}
           errorByKey={errorByKey}

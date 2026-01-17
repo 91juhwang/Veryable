@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { writeRecord } from "../utils/checkInStorage";
 
@@ -20,86 +20,124 @@ export function useOperatorCheck(
   const [codeByKey, setCodeByKey] = useState<Record<string, string>>({});
   const [errorByKey, setErrorByKey] = useState<Record<string, string>>({});
 
-  const handleCodeChange = (operatorId: number, value: string) => {
-    const key = `${opId}:${operatorId}`;
-    setCodeByKey((prev) => ({ ...prev, [key]: value }));
-  };
+  const handleCodeChange = useCallback(
+    (operatorId: number, value: string) => {
+      const key = `${opId}:${operatorId}`;
+      setCodeByKey((prev) => {
+        if (prev[key] === value) return prev;
+        return { ...prev, [key]: value };
+      });
+    },
+    [opId]
+  );
 
-  const handleCheckIn = (operatorId: number, code: string) => {
-    if (!code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Enter the check-in code.",
-      }));
-      return;
-    }
+  const handleCheckIn = useCallback(
+    (operatorId: number, code: string) => {
+      if (!code) {
+        setErrorByKey((prev) => {
+          const key = `${opId}:${operatorId}`;
+          const nextError = "Enter the check-in code.";
+          if (prev[key] === nextError) return prev;
+          return {
+            ...prev,
+            [key]: nextError,
+          };
+        });
+        return;
+      }
 
-    if (checkInCode !== code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Invalid check-in code.",
-      }));
-      return;
-    }
+      if (checkInCode !== code) {
+        setErrorByKey((prev) => {
+          const key = `${opId}:${operatorId}`;
+          const nextError = "Invalid check-in code.";
+          if (prev[key] === nextError) return prev;
+          return {
+            ...prev,
+            [key]: nextError,
+          };
+        });
+        return;
+      }
 
-    setErrorByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
+      setErrorByKey((prev) => {
+        const key = `${opId}:${operatorId}`;
+        if (!prev[key]) return prev;
+        return {
+          ...prev,
+          [key]: "",
+        };
+      });
 
-    setCodeByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
+      setCodeByKey((prev) => {
+        const key = `${opId}:${operatorId}`;
+        if (!prev[key]) return prev;
+        return {
+          ...prev,
+          [key]: "",
+        };
+      });
 
-    writeRecord(
-      opId,
-      operatorId,
-      "checkIn",
-      {
+      writeRecord(opId, operatorId, "checkIn", {
         code,
         timestamp: new Date().toISOString(),
+      });
+    },
+    [checkInCode, opId]
+  );
+
+  const handleCheckOut = useCallback(
+    (operatorId: number, code: string) => {
+      if (!code) {
+        setErrorByKey((prev) => {
+          const key = `${opId}:${operatorId}`;
+          const nextError = "Enter the check-out code.";
+          if (prev[key] === nextError) return prev;
+          return {
+            ...prev,
+            [key]: nextError,
+          };
+        });
+        return;
       }
-    );
-  };
 
-  const handleCheckOut = (operatorId: number, code: string) => {
-    if (!code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Enter the check-out code.",
-      }));
-      return;
-    }
+      if (checkOutCode !== code) {
+        setErrorByKey((prev) => {
+          const key = `${opId}:${operatorId}`;
+          const nextError = "Invalid check-out code.";
+          if (prev[key] === nextError) return prev;
+          return {
+            ...prev,
+            [key]: nextError,
+          };
+        });
+        return;
+      }
 
-    if (checkOutCode !== code) {
-      setErrorByKey((prev) => ({
-        ...prev,
-        [`${opId}:${operatorId}`]: "Invalid check-out code.",
-      }));
-      return;
-    }
+      setErrorByKey((prev) => {
+        const key = `${opId}:${operatorId}`;
+        if (!prev[key]) return prev;
+        return {
+          ...prev,
+          [key]: "",
+        };
+      });
 
-    setErrorByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
+      setCodeByKey((prev) => {
+        const key = `${opId}:${operatorId}`;
+        if (!prev[key]) return prev;
+        return {
+          ...prev,
+          [key]: "",
+        };
+      });
 
-    setCodeByKey((prev) => ({
-      ...prev,
-      [`${opId}:${operatorId}`]: "",
-    }));
-
-    writeRecord(
-      opId,
-      operatorId,
-      "checkOut",
-      {
+      writeRecord(opId, operatorId, "checkOut", {
         code,
         timestamp: new Date().toISOString(),
-      }
-    );
-  };
+      });
+    },
+    [checkOutCode, opId]
+  );
 
   return { codeByKey, errorByKey, handleCodeChange, handleCheckIn, handleCheckOut };
 }
