@@ -24,12 +24,17 @@ npm run dev # or pnpm :)
 
 ## Decisions & Trade-offs
 
-- Focoused on separation of concerns. 
-  - custom hooks to separate logic and reduce prop drilling 
-  - fetch/search/sort/check-in & out each has a single home
+- **Purposely kept dependencies small (intentional)**.
+  - Given the small datasets, sorting/searching can be handled with a few small helpers without pulling in large table/data libraries.
+  - Benefits: smaller bundle, faster installs, fewer transitive deps, reduced supply-chain surface area, and easier review/auditing in an assessment setting.
+  - Trade-off: custom logic is less feature-rich.
+  - The sorting/searching logic is isolated in hooks/utils to allow easy “swap to a library later”.
+  - In a production app with more complex requirements, I would prefer well-maintained libraries (e.g. TanStack Query for data fetching, TanStack Table or MUI DataGrid for tables, etc.)
+--
+- Added custom hooks to separate concerns and reduce prop drilling. fetch/search/sort/check-in & out each has a single home
 - Business logic extracted into `src/utils` 
-  - sorting, filters/search, datetime formatting, storage helpers for reuse, readability, easier testing & separation of concerns
-- Components kept small and responsibility-focused to avoid leaking concerns into unrelated parents
+  - sorting, search, datetime, storage helpers for reusability, readability, easier testing & separation of concerns
+- Components kept small and "responsibility-focused" to avoid leaking concerns into unrelated parents
 - Check-in/out is persisted client-side in `localStorage`, read & write through `checkinStorage`
 - Search is a simple “contains” match
 
@@ -38,7 +43,7 @@ npm run dev # or pnpm :)
 - **Check In / Out**:
   - The `code` input expects the `checkInCode` / `checkOutCode` from the API response.
   - Successful check in/out writes a timestamp to `localStorage` and the Status column updates immediately.
-- **Data fetching**: `OpsDashboard` fetches ops from `https://frontend-challenge.veryableops.com/` and shows loading/error/empty-search states.
+- **Time display**: times are formatted in CST (`America/Chicago`). Stored timestamps (e.g. check-in/out) remain UTC ISO strings.
+- **Data fetching**: `OpsDashboard` fetches from `https://frontend-challenge.veryableops.com/` and shows loading/error/empty-search states.
 - **Search**: filters by op title/public ID, and also operator full name.
 - **Sorting**: click the table headers to cycle `asc → desc → none` (Name is last name, then first name).
-- **Time display**: times are formatted as UTC (via `Intl.DateTimeFormat`).
