@@ -1,7 +1,7 @@
 "use client";
 
 import { TextField, InputAdornment } from "@mui/material";
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from "@mui/icons-material/Search";
 
 type SearchBarProps = {
   value: string;
@@ -16,13 +16,15 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       value={value}
       onChange={(event) => onChange(event.target.value)}
       variant="outlined"
-    // slotProps={{
-    //   inputLabel: () => (
-    //     <InputAdornment position="start">
-    //       <SearchIcon />
-    //     </InputAdornment>
-    //   ),
-    // }}
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+        },
+      }}
     />
   );
 }
