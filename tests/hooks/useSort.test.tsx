@@ -9,23 +9,23 @@ describe("useSort", () => {
     expect(result.current.sortState).toBeNull();
 
     act(() => {
-      result.current.toggleSort("firstName");
+      result.current.toggleSort("name");
     });
     expect(result.current.sortState).toEqual({
-      key: "firstName",
+      key: "name",
       direction: "asc",
     });
 
     act(() => {
-      result.current.toggleSort("firstName");
+      result.current.toggleSort("name");
     });
     expect(result.current.sortState).toEqual({
-      key: "firstName",
+      key: "name",
       direction: "desc",
     });
 
     act(() => {
-      result.current.toggleSort("firstName");
+      result.current.toggleSort("name");
     });
     expect(result.current.sortState).toBeNull();
   });

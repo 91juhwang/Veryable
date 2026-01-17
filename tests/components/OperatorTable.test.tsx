@@ -24,7 +24,7 @@ describe("OperatorTable", () => {
   it("renders headers and empty state", () => {
     render(<OperatorTable op={op} />);
 
-    expect(screen.getByText("First Name")).toBeInTheDocument();
+    expect(screen.getByText("Name")).toBeInTheDocument();
     expect(screen.getByText("No operators to display.")).toBeInTheDocument();
   });
 });

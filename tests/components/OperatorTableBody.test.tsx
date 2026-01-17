@@ -48,7 +48,6 @@ describe("OperatorTableBody", () => {
       </table>
     );
 
-    expect(screen.getByText("Taylor")).toBeInTheDocument();
-    expect(screen.getByText("Ng")).toBeInTheDocument();
+    expect(screen.getByText("Taylor Ng")).toBeInTheDocument();
   });
 });

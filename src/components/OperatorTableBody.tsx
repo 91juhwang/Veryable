@@ -1,10 +1,11 @@
 "use client";
 
 import { Button, Chip, Stack, TableBody, TableCell, TableRow, TextField, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 // import { useEffect, useState } from "react";
 
 import { readRecord } from "../utils/checkInStorage";
-import { formatDateTime } from "../utils/datetime";
+import { formatToTime } from "../utils/datetime";
 
 import type { Op } from "../types";
 
@@ -46,9 +47,17 @@ export function OperatorTableBody({
         const key = `${opId}:${operator.id}`;
 
         return (
-          <TableRow key={operator.id}>
-            <TableCell>{operator.firstName}</TableCell>
-            <TableCell sx={{ whitespace: 'nowrap' }}>{operator.lastName}</TableCell>
+          <TableRow
+            key={operator.id}
+            sx={(theme) => ({
+              "&:hover": {
+                backgroundColor: alpha(theme.palette.text.primary, 0.03),
+              },
+            })}
+          >
+            <TableCell sx={{ whiteSpace: "nowrap" }}>
+              {operator.firstName} {operator.lastName}
+            </TableCell>
             <TableCell align="right">{operator.opsCompleted}</TableCell>
             <TableCell align="right">
               {Math.round(operator.reliability * 100)}%
@@ -69,8 +78,21 @@ export function OperatorTableBody({
               <Stack direction="row" spacing={1} alignItems="center">
                 <TextField
                   size="small"
-                  label="Code"
+                  label="code"
                   variant="outlined"
+                  sx={{
+                    width: 110,
+                    "& .MuiOutlinedInput-input": {
+                      paddingTop: "3px",
+                      paddingBottom: "3px",
+                    },
+                    "& .MuiInputLabel-root": {
+                      transform: "translate(14px, 3px) scale(1)",
+                    },
+                    "& .MuiInputLabel-root.MuiInputLabel-shrink": {
+                      transform: "translate(14px, -7px) scale(0.75)",
+                    },
+                  }}
                   value={codeByKey[key] ?? ""}
                   onChange={(event) =>
                     onCodeChange(operator.id, event.target.value)
@@ -80,11 +102,11 @@ export function OperatorTableBody({
                 />
                 <Button
                   size="small"
-                  variant="contained"
+                  variant="outlined"
                   onClick={() => onCheckIn(operator.id, codeByKey[key] ?? "")}
                   sx={{ whiteSpace: "nowrap" }}
                 >
-                  Check In
+                  <Typography variant="body2" fontSize={14}>Check In</Typography>
                 </Button>
                 <Button
                   size="small"
@@ -92,24 +114,30 @@ export function OperatorTableBody({
                   onClick={() => onCheckOut(operator.id, codeByKey[key] ?? "")}
                   sx={{ whiteSpace: "nowrap" }}
                 >
-                  Check Out
+                  <Typography variant="body2" fontSize={14}>Check Out</Typography>
                 </Button>
               </Stack>
-              {(record?.checkIn || record?.checkOut) && (
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  display="block"
-                  sx={{ mt: 0.5 }}
-                >
-                  {record?.checkIn && <>In: {formatDateTime(record.checkIn.timestamp)}</>}
-                  {record?.checkOut && (
-                    <>
-                      {" <> "} Out: {formatDateTime(record.checkOut.timestamp)}
-                    </>
-                  )}
+            </TableCell>
+            <TableCell sx={{ whiteSpace: "nowrap" }}>
+              <Stack spacing={0.25}>
+                <Typography variant="caption" color="text.secondary">
+                  Status
                 </Typography>
-              )}
+                {record?.checkIn ? (
+                  <Typography variant="body2">
+                    Checked in - {formatToTime(record.checkIn.timestamp)}
+                  </Typography>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    Not checked in
+                  </Typography>
+                )}
+                {record?.checkOut && (
+                  <Typography variant="body2">
+                    Checked out - {formatToTime(record.checkOut.timestamp)}
+                  </Typography>
+                )}
+              </Stack>
             </TableCell>
           </TableRow>
         );

@@ -24,27 +24,15 @@ export function OperatorTableHeader({
     <TableHead>
       <TableRow>
         <TableCell
-          sortDirection={cellDirection("firstName")}
+          sortDirection={cellDirection("name")}
         >
           <TableSortLabel
-            active={sortState?.key === "firstName"}
-            direction={sortDirection("firstName")}
-            onClick={() => onToggleSort("firstName")}
+            active={sortState?.key === "name"}
+            direction={sortDirection("name")}
+            onClick={() => onToggleSort("name")}
             sx={{ whiteSpace: "nowrap" }}
           >
-            First Name
-          </TableSortLabel>
-        </TableCell>
-        <TableCell
-          sortDirection={cellDirection("lastName")}
-        >
-          <TableSortLabel
-            active={sortState?.key === "lastName"}
-            direction={sortDirection("lastName")}
-            onClick={() => onToggleSort("lastName")}
-            sx={{ whiteSpace: "nowrap" }}
-          >
-            Last Name
+            Name
           </TableSortLabel>
         </TableCell>
         <TableCell
@@ -74,6 +62,7 @@ export function OperatorTableHeader({
         </TableCell>
         <TableCell>Endorsements</TableCell>
         <TableCell>Check In / Out</TableCell>
+        <TableCell>Status</TableCell>
       </TableRow>
     </TableHead>
   );

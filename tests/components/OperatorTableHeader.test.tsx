@@ -14,11 +14,11 @@ describe("OperatorTableHeader", () => {
       </table>
     );
 
-    expect(screen.getByText("First Name")).toBeInTheDocument();
-    expect(screen.getByText("Last Name")).toBeInTheDocument();
+    expect(screen.getByText("Name")).toBeInTheDocument();
     expect(screen.getByText("Ops Completed")).toBeInTheDocument();
     expect(screen.getByText("Reliability")).toBeInTheDocument();
     expect(screen.getByText("Endorsements")).toBeInTheDocument();
     expect(screen.getByText("Check In / Out")).toBeInTheDocument();
+    expect(screen.getByText("Status")).toBeInTheDocument();
   });
 });
