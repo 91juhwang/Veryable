@@ -1,6 +1,7 @@
 "use client";
 
 import { Table, TableContainer } from "@mui/material";
+import { useMemo } from "react";
 
 import { useOperatorCheck } from "../hooks/useOperatorCheck";
 import { useSort } from "../hooks/useSort";
@@ -19,6 +20,7 @@ type OperatorTableProps = {
 export function OperatorTable({ op }: OperatorTableProps) {
   const { opId, operators, checkInCode, checkOutCode } = op;
   const { sortState, toggleSort, sortDirection } = useSort();
+  const sortedData = useMemo(() => applySort(operators, sortState), [operators, sortState]);
   const {
     codeByKey,
     errorByKey,
@@ -26,7 +28,6 @@ export function OperatorTable({ op }: OperatorTableProps) {
     handleCheckIn,
     handleCheckOut,
   } = useOperatorCheck(opId, checkInCode, checkOutCode);
-  const sortedData = applySort(operators, sortState);
 
   return (
     <TableContainer sx={{ mt: 2, overflowX: "auto" }}>
