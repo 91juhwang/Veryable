@@ -40,6 +40,11 @@ npm run dev # or pnpm :)
   - Components kept small and "responsibility-focused" to avoid leaking concerns into unrelated parents
   - Check-in/out is persisted client-side in `localStorage`, read & write through `checkinStorage`
 
+- **Memoization & Optimization**
+  - Used `useMemo` and `useCallback` where it made sense to avoid unnecessary rerenders.
+  - Added a simple `recordCache` to cache checkIn checkOut data. Noticed `localStorage` being called multiple times on every state changes, so optimized to prevent potential leaks. 
+  - Improves search responsiveness greatly! reduces unnecessary recalculation
+
 ## Behavior Notes
 
 - **Check In / Out**:
