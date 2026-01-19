@@ -1,4 +1,4 @@
-# Veryable Frontend Challenge
+# Frontend 
 
 ## Setup
 
